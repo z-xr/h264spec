@@ -10,7 +10,7 @@ typedef struct
     
     unsigned int width;
     unsigned int height;
-    unsigned int fps;       //SPS�п��ܲ�����FPS��Ϣ
+    unsigned int fps;       
 } pps_info_struct;
 
 int h264_parse_pps(const unsigned char *data, unsigned int dataSize, pps_info_struct *info);

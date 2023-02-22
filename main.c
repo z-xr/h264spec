@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include "H264ParseSPS.h"
+#include "log.h"
 
 int main()
 {
@@ -12,5 +13,8 @@ int main()
 	memset(info, 0, sizeof(sps_info_struct));
 	h264_parse_sps(data, dataSize, info);
 	printf("width %u height %u fps %u\n", info->width, info->height, info->fps);
+	LOGE("%02x\n", data[0]);
+	LOGW("LOGW %02x\n", data[0]);
+	LOGI("LOGI %02x\n", data[0]);
 	return 0;	
  } 

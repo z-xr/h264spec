@@ -1,8 +1,7 @@
 //
 //  H264ParseSPS.h
 //
-//  Created by lzj<lizhijian_21@163.com> on 2018/7/6.
-//  Copyright ? 2018ï¿½ï¿½ LZJ. All rights reserved.
+//  Created zhaoxr
 //
 
 #ifndef H264ParseSPS_h
@@ -25,19 +24,19 @@ typedef struct
     
     unsigned int width;
     unsigned int height;
-    unsigned int fps;       //SPSï¿½Ð¿ï¿½ï¿½Ü²ï¿½ï¿½ï¿½ï¿½ï¿½FPSï¿½ï¿½Ï¢
+    unsigned int fps;     //SPSÖÐ¿ÉÄÜ²»°üº¬FPSÐÅÏ¢  
 } sps_info_struct;
 
 
-void vui_para_parse(sps_bit_stream *bs, sps_info_struct *info);
+void vui_para_parse(bit_stream *bs, sps_info_struct *info);
 
 /**
- ï¿½ï¿½ï¿½ï¿½SPSï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+ ½âÎöSPSÊý¾ÝÐÅÏ¢
 
- @param data SPSï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ÒªNalï¿½ï¿½ï¿½ï¿½Îª0x7ï¿½ï¿½ï¿½ÝµÄ¿ï¿½Ê¼(ï¿½ï¿½ï¿½ç£º67 42 00 28 ab 40 22 01 e3 cb cd c0 80 80 a9 02)
- @param dataSize SPSï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½
- @param info SPSï¿½ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ý½á¹¹ï¿½ï¿½
- @return success:1ï¿½ï¿½fail:0
+ @param data SPSÊý¾ÝÄÚÈÝ£¬ÐèÒªNalÀàÐÍÎª0x7Êý¾ÝµÄ¿ªÊ¼(±ÈÈç£º67 42 00 28 ab 40 22 01 e3 cb cd c0 80 80 a9 02)
+ @param dataSize SPSÊý¾ÝµÄ³¤¶È
+ @param info SPS½âÎöÖ®ºóµÄÐÅÏ¢Êý¾Ý½á¹¹Ìå
+ @return success:1£¬fail:0
  
  */
 int h264_parse_sps(const unsigned char *data, unsigned int dataSize, sps_info_struct *info);

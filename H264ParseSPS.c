@@ -5,14 +5,9 @@
 //
 
 #include "H264ParseSPS.h"
+#include "log.h"
  
-/**
- ��Ƶ��������Ϣ(Video usability information)����
- @param bs sps_bit_stream����
- @param info sps����֮�����Ϣ���ݼ��ṹ��
- @see E.1.1 VUI parameters syntax
- */
-void vui_para_parse(sps_bit_stream *bs, sps_info_struct *info)
+void vui_para_parse(bit_stream *bs, sps_info_struct *info)
 {
     UINT aspect_ratio_info_present_flag = u(bs, 1);
     if (aspect_ratio_info_present_flag) {
@@ -63,7 +58,6 @@ void vui_para_parse(sps_bit_stream *bs, sps_info_struct *info)
         //hrd_parameters()  //see E.1.2 HRD parameters syntax
     }
     
-    //���������Ҫhrd_parameters()�����ӿ�ʵ�ֲ�����
     UINT vcl_hrd_parameters_present_flag = u(bs, 1);
     if (vcl_hrd_parameters_present_flag) {
         //hrd_parameters()
@@ -89,21 +83,25 @@ void vui_para_parse(sps_bit_stream *bs, sps_info_struct *info)
 //See 7.3.2.1.1 Sequence parameter set data syntax
 INT h264_parse_sps(const BYTE *data, UINT dataSize, sps_info_struct *info)
 {
+	printf("data size %u\n", dataSize);
     if (!data || dataSize <= 0 || !info) return 0;
     INT ret = 0;
     
     BYTE *dataBuf = malloc(dataSize);
-    memcpy(dataBuf, data, dataSize);        //���¿���һ�����ݣ���ֹ�Ƴ�������ʱ��ԭ�������Ӱ��
+    memcpy(dataBuf, data, dataSize);        
     del_emulation_prevention(dataBuf, &dataSize);
  
-    sps_bit_stream bs = {0};
-    sps_bs_init(&bs, dataBuf, dataSize);   //��ʼ��SPS�������ṹ��
-    
+    bit_stream bs = {0};
+    sps_bs_init(&bs, dataBuf, dataSize);
+	LOGE("%02x %02x\n", bs.data[0], bs.data[1]);
+	printf("bs size = %d\n", bs.size);
     UINT forbidden_zero_bit = u(&bs, 1);      //forbidden_zero_bit
     UINT nal_ref_idc = u(&bs, 2);      //nal_ref_idc
     UINT nal_unit_type = u(&bs, 5);
- 
+
+	printf("nal_unit_type %x\n", nal_unit_type);
     if (nal_unit_type == 0x7) {     //Nal SPS Flag
+    	printf("enter\n");
         info->profile_idc = u(&bs, 8);
         u(&bs, 1);      //constraint_set0_flag
         u(&bs, 1);      //constraint_set1_flag
@@ -116,7 +114,7 @@ INT h264_parse_sps(const BYTE *data, UINT dataSize, sps_info_struct *info)
         
         ue(&bs);    //seq_parameter_set_id
         
-        UINT chroma_format_idc = 1;     //�������ͼ�󲿷ָ�ʽ��4:2:0
+        UINT chroma_format_idc = 1;    
         if (info->profile_idc == 100 || info->profile_idc == 110 || info->profile_idc == 122 ||
             info->profile_idc == 244 || info->profile_idc == 44 || info->profile_idc == 83 ||
             info->profile_idc == 86 || info->profile_idc == 118 || info->profile_idc == 128 ||
@@ -163,7 +161,7 @@ INT h264_parse_sps(const BYTE *data, UINT dataSize, sps_info_struct *info)
         ue(&bs);      //max_num_ref_frames
         u(&bs, 1);      //gaps_in_frame_num_value_allowed_flag
         
-        UINT pic_width_in_mbs_minus1 = ue(&bs);     //��36λ��ʼ
+        UINT pic_width_in_mbs_minus1 = ue(&bs);     
         UINT pic_height_in_map_units_minus1 = ue(&bs);      //47
         UINT frame_mbs_only_flag = u(&bs, 1);
         
@@ -176,6 +174,7 @@ INT h264_parse_sps(const BYTE *data, UINT dataSize, sps_info_struct *info)
         
         u(&bs, 1);     //direct_8x8_inference_flag
         UINT frame_cropping_flag = u(&bs, 1);
+		printf("frame_cropping_flag %u\n", frame_cropping_flag);
         if (frame_cropping_flag) {
             UINT frame_crop_left_offset = ue(&bs);
             UINT frame_crop_right_offset = ue(&bs);
@@ -195,6 +194,7 @@ INT h264_parse_sps(const BYTE *data, UINT dataSize, sps_info_struct *info)
             
             info->width -= crop_unit_x * (frame_crop_left_offset + frame_crop_right_offset);
             info->height -= crop_unit_y * (frame_crop_top_offset + frame_crop_bottom_offset);
+			printf("width %d\n", info->width);
         }
         
         UINT vui_parameters_present_flag = u(&bs, 1);

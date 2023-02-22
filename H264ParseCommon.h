@@ -8,17 +8,17 @@ typedef unsigned int UINT;
 
 typedef struct
 {
-    const BYTE *data;   //spsï¿½ï¿½ï¿½ï¿½
-    UINT size;          //spsï¿½ï¿½ï¿½Ý´ï¿½Ð¡
-    UINT index;         //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Úµï¿½Î»ï¿½Ã±ï¿½ï¿½
-} sps_bit_stream;
+    const BYTE *data;   //spsÊý¾Ý
+    UINT size;          
+    UINT index;         
+} bit_stream;
  
 void del_emulation_prevention(BYTE *data, UINT *dataSize);
-void sps_bs_init(sps_bit_stream *bs, const BYTE *data, UINT size);
-INT eof(sps_bit_stream *bs);
-UINT u(sps_bit_stream *bs, BYTE bitCount);
-UINT ue(sps_bit_stream *bs);
-INT se(sps_bit_stream *bs);
+void sps_bs_init(bit_stream *bs, const BYTE *data, UINT size);
+INT eof(bit_stream *bs);
+UINT u(bit_stream *bs, BYTE bitCount);
+UINT ue(bit_stream *bs);
+INT se(bit_stream *bs);
 
 
 #endif
